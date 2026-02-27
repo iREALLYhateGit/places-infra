@@ -1,0 +1,12 @@
+TERRAFORM:
+terraform plan
+terraform apply #ВМ создаётся
+terraform destroy #ВМ удаляется
+
+В Compute Cloud можно посмотреть статус и другую информацию по ВМ.
+ssh ubuntu@<ip>
+
+
+Генерация SSH-ключа:
+ssh-keygen -t rsa -b 4096
+

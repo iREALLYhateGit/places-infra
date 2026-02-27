@@ -1,0 +1,9 @@
+# Секретные файлы - никогда не заливать
+key.json
+
+# Terraform рабочие файлы
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+*.tfplan
