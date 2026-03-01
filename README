@@ -1,4 +1,16 @@
+nano ~/.terraformrc (блок в конфигурации Terraform управляет тем, откуда и как скачиваются провайдеры):
+provider_installation {
+  network_mirror {
+    url = "https://terraform-mirror.yandexcloud.net/"
+    include = ["registry.terraform.io/*/*"]
+  }
+  direct {
+    exclude = ["registry.terraform.io/*/*"]
+  }
+}
+
 TERRAFORM:
+terraform init
 terraform plan
 terraform apply #ВМ создаётся
 terraform destroy #ВМ удаляется
