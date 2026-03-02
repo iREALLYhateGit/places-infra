@@ -28,3 +28,6 @@ ssh ubuntu@<ip>
 
 Генерация SSH-ключа:
 ssh-keygen -t rsa -b 4096
+
+docker login
+docker compose up
