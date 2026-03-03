@@ -68,3 +68,15 @@
         name: ubuntu
         groups: docker
         append: yes
+
+    - name: Copy docker-compose.yml
+      ansible.builtin.copy:
+        src: ../docker-compose.yml
+        dest: /home/ubuntu/docker-compose.yml
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+        
+    - name: Run docker-compose
+      ansible.builtin.command:
+        cmd: docker compose up -d        
