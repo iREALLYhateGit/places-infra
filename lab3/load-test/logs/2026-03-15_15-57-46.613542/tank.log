@@ -1,0 +1,99 @@
+2026-03-15 15:57:46,631 [INFO] root tankworker.py:153	Log file created
+2026-03-15 15:57:46,631 [INFO] root tankworker.py:157	Logging handler <FileHandler /var/loadtest/tank_errors.log (WARNING)> added
+2026-03-15 15:57:46,631 [INFO] root tankworker.py:157	Logging handler <StreamHandler <stdout> (INFO)> added
+2026-03-15 15:57:46,631 [INFO] root tankworker.py:157	Logging handler <StreamHandler <stderr> (NOTSET)> added
+2026-03-15 15:57:46,652 [INFO] root tankworker.py:69	Created a folder for the test. /var/loadtest/logs/2026-03-15_15-57-46.613542
+2026-03-15 15:57:46,654 [INFO] yandextank.core.tankcore tankcore.py:254	Configuring plugins...
+2026-03-15 15:57:46,654 [INFO] yandextank.core.tankcore tankcore.py:205	Loading plugins...
+2026-03-15 15:57:46,654 [INFO] yandextank.core.tankcore tankcore.py:215	Trying to import module: autostop
+2026-03-15 15:57:46,654 [INFO] yandextank.core.tankcore tankcore.py:216	Path: yandextank.plugins.Autostop
+2026-03-15 15:57:46,655 [INFO] yandextank.core.tankcore tankcore.py:215	Trying to import module: console
+2026-03-15 15:57:46,656 [INFO] yandextank.core.tankcore tankcore.py:216	Path: yandextank.plugins.Console
+2026-03-15 15:57:46,656 [INFO] yandextank.core.tankcore tankcore.py:215	Trying to import module: json_report
+2026-03-15 15:57:46,656 [INFO] yandextank.core.tankcore tankcore.py:216	Path: yandextank.plugins.JsonReport
+2026-03-15 15:57:46,656 [INFO] yandextank.core.tankcore tankcore.py:215	Trying to import module: phantom
+2026-03-15 15:57:46,656 [INFO] yandextank.core.tankcore tankcore.py:216	Path: yandextank.plugins.Phantom
+2026-03-15 15:57:46,658 [INFO] yandextank.core.tankcore tankcore.py:215	Trying to import module: rcheck
+2026-03-15 15:57:46,658 [INFO] yandextank.core.tankcore tankcore.py:216	Path: yandextank.plugins.ResourceCheck
+2026-03-15 15:57:46,658 [INFO] yandextank.core.tankcore tankcore.py:215	Trying to import module: shellexec
+2026-03-15 15:57:46,658 [INFO] yandextank.core.tankcore tankcore.py:216	Path: yandextank.plugins.ShellExec
+2026-03-15 15:57:46,658 [INFO] yandextank.core.tankcore tankcore.py:215	Trying to import module: telegraf
+2026-03-15 15:57:46,659 [INFO] yandextank.core.tankcore tankcore.py:216	Path: yandextank.plugins.Telegraf
+2026-03-15 15:57:46,659 [INFO] yandextank.core.tankcore tankcore.py:215	Trying to import module: rcassert
+2026-03-15 15:57:46,659 [INFO] yandextank.core.tankcore tankcore.py:216	Path: yandextank.plugins.RCAssert
+2026-03-15 15:57:46,669 [INFO] yandextank.common.util util.py:578	Testing connection to resolved address 158.160.40.209 and port 30080
+2026-03-15 15:57:46,751 [INFO] yandextank.plugins.Phantom.utils utils.py:277	Resolved 158.160.40.209 into 158.160.40.209:30080
+2026-03-15 15:57:46,752 [INFO] yandextank.stepper.main main.py:197	Configuring StepperWrapper...
+2026-03-15 15:57:46,753 [INFO] yandextank.stepper.main main.py:336	Making stpd-file: /var/loadtest/logs/ammo.txt_77d4cc0ca7cb2cc459ace207898a348d.stpd
+2026-03-15 15:57:46,755 [INFO] yandextank.stepper.config config.py:76	Default ammo type ('phantom') used, use 'phantom.ammo_type' option to override it
+2026-03-15 15:57:46,756 [INFO] yandextank.stepper.config config.py:76	Default ammo type ('phantom') used, use 'phantom.ammo_type' option to override it
+2026-03-15 15:57:46,757 [INFO] yandextank.stepper.missile missile.py:95	Loading ammo from 'ammo.txt'
+2026-03-15 15:57:46,757 [INFO] yandextank.stepper.config config.py:126	Using AmmoFileReader ammo reader
+2026-03-15 15:57:46,760 [INFO] yandextank.stepper.missile missile.py:119	Zero-sized chunk in ammo file at 446. Starting over.
+2026-03-15 15:57:46,879 [INFO] yandextank.plugins.Telegraf.plugin plugin.py:145	Detected monitoring configuration: telegraf
+2026-03-15 15:57:46,879 [INFO] yandextank.core.tankcore tankcore.py:268	Preparing test...
+2026-03-15 15:57:46,892 [INFO] yandextank.common.interfaces plugin.py:38	Checking tank resources...
+2026-03-15 15:57:46,903 [INFO] yandextank.plugins.Telegraf.config config.py:146	Empty host config, using defaults
+2026-03-15 15:57:46,904 [INFO] yandextank.plugins.Telegraf.config config.py:164	Telegraf Result config {'host_config': {'CPU': {'name': '[inputs.cpu]', 'percpu': 'false', 'fielddrop': '["time_*", "usage_guest_nice"]'}, 'Memory': {'name': '[inputs.mem]', 'fielddrop': '["active", "inactive", "total", "used_per*", "avail*"]'}, 'Disk': {'name': '[inputs.diskio]', 'devices': '["vda0","sda0","vda1","sda1","vda2","sda2","vda3","sda3","vda4","sda4","vda5","sda5"]'}, 'Net': {'name': '[inputs.net]', 'interfaces': '["eth0","eth1","eth2","eth3","eth4","eth5"]', 'fielddrop': '["icmp*", "ip*", "udplite*", "tcp*", "udp*", "drop*", "err*"]'}, 'System': {'name': '[inputs.system]', 'fielddrop': '["n_users", "n_cpus", "uptime*"]'}, 'Kernel': {'name': '[inputs.kernel]', 'fielddrop': '["boot_time"]'}}, 'port': 22, 'python': '/usr/bin/env python3', 'interval': 1, 'username': 'root', 'telegraf': '/usr/bin/telegraf', 'comment': '', 'custom': [], 'host': '158.160.40.209', 'startup': [], 'shutdown': [], 'source': [], 'telegrafraw': []}
+2026-03-15 15:57:46,905 [INFO] yandextank.plugins.Telegraf.client client.py:200	Installing monitoring agent at root@158.160.40.209...
+2026-03-15 15:57:46,906 [INFO] yandextank.plugins.Telegraf.client client.py:207	Creating temp dir on 158.160.40.209
+2026-03-15 15:57:46,906 [INFO] yandextank.common.util util.py:97	Execute on 158.160.40.209: /usr/bin/env python3 -c "import tempfile; print(tempfile.mkdtemp());"
+2026-03-15 15:57:47,277 [ERROR] yandextank.plugins.Telegraf.client client.py:211	Failed to install monitoring agent to 158.160.40.209
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/yandextank/plugins/Telegraf/client.py", line 209, in install
+    out, errors, err_code = self.ssh.execute(cmd)
+  File "/usr/local/lib/python3.8/dist-packages/yandextank/common/util.py", line 98, in execute
+    with self.connect() as client:
+  File "/usr/local/lib/python3.8/dist-packages/yandextank/common/util.py", line 57, in connect
+    client.connect(
+  File "/usr/local/lib/python3.8/dist-packages/paramiko/client.py", line 435, in connect
+    self._auth(
+  File "/usr/local/lib/python3.8/dist-packages/paramiko/client.py", line 767, in _auth
+    raise SSHException("No authentication methods available")
+paramiko.ssh_exception.SSHException: No authentication methods available
+2026-03-15 15:58:02,322 [INFO] yandextank.core.tankcore tankcore.py:278	Starting test...
+2026-03-15 15:58:02,329 [INFO] yandextank.aggregator.tank_aggregator tank_aggregator.py:65	using verbose histogram
+2026-03-15 15:58:02,352 [INFO] yandextank.core.tankcore tankcore.py:285	Plugin plugin_autostop required 0.000014 seconds to start
+2026-03-15 15:58:02,353 [INFO] yandextank.core.tankcore tankcore.py:285	Plugin plugin_console required 0.000013 seconds to start
+2026-03-15 15:58:02,353 [INFO] yandextank.core.tankcore tankcore.py:285	Plugin plugin_json_report required 0.000125 seconds to start
+2026-03-15 15:58:02,360 [INFO] yandextank.core.tankcore tankcore.py:285	Plugin plugin_phantom required 0.005969 seconds to start
+2026-03-15 15:58:02,360 [INFO] yandextank.core.tankcore tankcore.py:285	Plugin plugin_rcheck required 0.000015 seconds to start
+2026-03-15 15:58:02,361 [INFO] yandextank.core.tankcore tankcore.py:285	Plugin plugin_shellexec required 0.000016 seconds to start
+2026-03-15 15:58:02,361 [INFO] yandextank.core.tankcore tankcore.py:285	Plugin plugin_telegraf required 0.000109 seconds to start
+2026-03-15 15:58:02,361 [INFO] yandextank.core.tankcore tankcore.py:285	Plugin plugin_rcassert required 0.000006 seconds to start
+2026-03-15 15:58:02,363 [INFO] yandextank.core.tankcore tankcore.py:294	Waiting for test to finish...
+2026-03-15 15:58:02,363 [INFO] yandextank.core.tankcore tankcore.py:295	Artifacts dir: /var/loadtest/logs/2026-03-15_15-57-46.613542
+2026-03-15 15:59:12,573 [INFO] yandextank.plugins.Phantom.plugin plugin.py:155	Phantom done its work with exit code: 0
+2026-03-15 15:59:12,575 [INFO] yandextank.core.tankcore tankcore.py:331	Finishing test...
+2026-03-15 15:59:12,577 [INFO] yandextank.core.tankcore tankcore.py:334	Stopping load generator and aggregator
+2026-03-15 15:59:12,577 [INFO] yandextank.aggregator.tank_aggregator tank_aggregator.py:126	Closing stats reader
+2026-03-15 15:59:12,577 [INFO] yandextank.aggregator.tank_aggregator tank_aggregator.py:129	Waiting for gun drain to finish
+2026-03-15 15:59:12,689 [INFO] yandextank.aggregator.tank_aggregator tank_aggregator.py:131	Waiting for stats drain to finish
+2026-03-15 15:59:13,021 [INFO] yandextank.aggregator.tank_aggregator tank_aggregator.py:133	Collecting remaining data
+2026-03-15 15:59:13,021 [INFO] yandextank.aggregator.tank_aggregator tank_aggregator.py:111	Timestamps without stats:
+2026-03-15 15:59:13,022 [INFO] yandextank.aggregator.tank_aggregator tank_aggregator.py:113	1773590351
+2026-03-15 15:59:13,025 [INFO] yandextank.aggregator.tank_aggregator tank_aggregator.py:113	1773590352
+2026-03-15 15:59:13,029 [INFO] yandextank.core.tankcore tankcore.py:338	Stopping monitoring
+2026-03-15 15:59:13,029 [INFO] yandextank.core.tankcore tankcore.py:340	Stopping <yandextank.plugins.Telegraf.plugin.Plugin object at 0x732887f5b5b0>
+2026-03-15 15:59:13,030 [INFO] yandextank.plugins.Telegraf.plugin plugin.py:223	Finishing monitoring
+2026-03-15 15:59:13,030 [INFO] yandextank.core.tankcore tankcore.py:342	RC after: 0
+2026-03-15 15:59:13,030 [INFO] yandextank.core.tankcore tankcore.py:361	Post-processing test...
+2026-03-15 15:59:13,031 [INFO] yandextank.common.util util.py:816	Trying to clean up
+2026-03-15 15:59:13,031 [INFO] yandextank.core.tankcore tankcore.py:562	Cleaning up plugin plugin_autostop
+2026-03-15 15:59:13,031 [INFO] yandextank.core.tankcore tankcore.py:562	Cleaning up plugin plugin_console
+2026-03-15 15:59:13,031 [INFO] yandextank.core.tankcore tankcore.py:562	Cleaning up plugin plugin_json_report
+2026-03-15 15:59:13,031 [INFO] yandextank.core.tankcore tankcore.py:562	Cleaning up plugin plugin_phantom
+2026-03-15 15:59:13,032 [INFO] yandextank.core.tankcore tankcore.py:562	Cleaning up plugin plugin_rcheck
+2026-03-15 15:59:13,032 [INFO] yandextank.core.tankcore tankcore.py:562	Cleaning up plugin plugin_shellexec
+2026-03-15 15:59:13,032 [INFO] yandextank.core.tankcore tankcore.py:562	Cleaning up plugin plugin_telegraf
+2026-03-15 15:59:13,032 [INFO] yandextank.core.tankcore tankcore.py:562	Cleaning up plugin plugin_rcassert
+2026-03-15 15:59:13,032 [INFO] yandextank.core.tankcore tankcore.py:630	Releasing lock: /var/lock/lunapark_bqm93axj.lock
+2026-03-15 15:59:13,035 [INFO] yandextank.core.tankcore tankcore.py:405	Artifacts dir: /var/loadtest/logs/2026-03-15_15-57-46.613542
+2026-03-15 15:59:13,036 [INFO] yandextank.core.tankcore tankcore.py:461	File not found to collect: validation_error.yaml
+2026-03-15 15:59:13,036 [INFO] yandextank.core.tankcore tankcore.py:466	File already exists: /var/loadtest/logs/2026-03-15_15-57-46.613542/answ_i4_dcbeu.log
+2026-03-15 15:59:13,036 [INFO] yandextank.core.tankcore tankcore.py:466	File already exists: /var/loadtest/logs/2026-03-15_15-57-46.613542/phout_k5gd11a5.log
+2026-03-15 15:59:13,036 [INFO] yandextank.core.tankcore tankcore.py:466	File already exists: /var/loadtest/logs/2026-03-15_15-57-46.613542/phantom_stat_bx05psld.log
+2026-03-15 15:59:13,036 [INFO] yandextank.core.tankcore tankcore.py:466	File already exists: /var/loadtest/logs/2026-03-15_15-57-46.613542/phantom_4i65jdtv.log
+2026-03-15 15:59:13,036 [INFO] yandextank.core.tankcore tankcore.py:466	File already exists: /var/loadtest/logs/2026-03-15_15-57-46.613542/phantom_yl4qjeah.conf
+2026-03-15 15:59:13,036 [INFO] yandextank.core.tankcore tankcore.py:466	File already exists: /var/loadtest/logs/2026-03-15_15-57-46.613542/monitoring_s2jv35xs.xml
+2026-03-15 15:59:13,037 [INFO] yandextank.core.tankcore tankcore.py:466	File already exists: /var/loadtest/logs/2026-03-15_15-57-46.613542/phantom_stdout_stderr_ghhesepy.log

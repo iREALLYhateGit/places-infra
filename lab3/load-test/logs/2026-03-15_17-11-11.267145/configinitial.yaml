@@ -1,0 +1,55 @@
+autostop:
+  enabled: true
+  package: yandextank.plugins.Autostop
+bfg:
+  enabled: false
+  package: yandextank.plugins.Bfg
+console:
+  enabled: true
+  package: yandextank.plugins.Console
+core: {}
+influx:
+  enabled: false
+  package: yandextank.plugins.InfluxUploader
+jmeter:
+  enabled: false
+  package: yandextank.plugins.JMeter
+json_report:
+  enabled: true
+  package: yandextank.plugins.JsonReport
+metaconf:
+  enabled: false
+  package: yandextank.plugins.MetaConf
+offline_report:
+  enabled: false
+  package: yandextank.plugins.OfflineReport
+opentsdb:
+  enabled: false
+  package: yandextank.plugins.OpenTSDBUploader
+overload:
+  enabled: false
+  package: yandextank.plugins.DataUploader
+pandora:
+  enabled: false
+  package: yandextank.plugins.Pandora
+phantom:
+  address: 158.160.40.209:30080
+  ammofile: ammo.txt
+  enabled: true
+  instances: 20
+  load_profile:
+    load_type: rps
+    schedule: line(1, 50, 60s)
+  package: yandextank.plugins.Phantom
+rcassert:
+  enabled: true
+  package: yandextank.plugins.RCAssert
+rcheck:
+  enabled: true
+  package: yandextank.plugins.ResourceCheck
+shellexec:
+  enabled: true
+  package: yandextank.plugins.ShellExec
+telegraf:
+  enabled: true
+  package: yandextank.plugins.Telegraf
