@@ -1,0 +1,124 @@
+name: Reusable CI
+
+on:
+  workflow_call:
+    inputs:
+      service-name:
+        description: "frontend or backend"
+        required: true
+        type: string
+      docker-image:
+        description: "Docker image name"
+        required: true
+        type: string
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      # Frontend
+      - name: set up Node.js
+        if: ${{ inputs.service-name == 'frontend' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: install dependencies
+        if: ${{ inputs.service-name == 'frontend' }}
+        run: npm ci
+
+      - name: run unit tests
+        if: ${{ inputs.service-name == 'frontend' }}
+        run: npm test
+
+      # Backend
+      - name: set up JDK
+        if: ${{ inputs.service-name == 'backend' }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: graalvm
+          java-version: "25"
+          cache: gradle
+
+      - name: give execute permissions
+        if: ${{ inputs.service-name == 'backend' }}
+        run: chmod +x ./gradlew
+
+      - name: run tests
+        if: ${{ inputs.service-name == 'backend' }}
+        run: ./gradlew test
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      # Frontend
+      - name: Set up Node.js
+        if: ${{ inputs.service-name == 'frontend' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        if: ${{ inputs.service-name == 'frontend' }}
+        run: npm ci
+
+      - name: Build
+        if: ${{ inputs.service-name == 'frontend' }}
+        run: npm run build
+
+      # Backend
+      - name: set up JDK
+        if: ${{ inputs.service-name == 'backend' }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: graalvm
+          java-version: "25"
+          cache: gradle
+
+      - name: give execute permissions
+        if: ${{ inputs.service-name == 'backend' }}
+        run: chmod +x ./gradlew
+
+      - name: Build
+        if: ${{ inputs.service-name == 'backend' }}
+        run: ./gradlew assemble
+
+  docker:
+    name: docker
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ inputs.docker-image }}
+          
