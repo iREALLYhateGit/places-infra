@@ -24,6 +24,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+      
+      - name: prove branch
+        run: cat test-lab3.txt
 
       # Frontend
       - name: set up Node.js
@@ -66,6 +69,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: prove branch
+        run: cat test-lab3.txt
       
       # Frontend
       - name: Set up Node.js
@@ -108,6 +114,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+
+      - name: prove branch
+        run: cat test-lab3.txt
 
       - name: log in to Docker Hub
         uses: docker/login-action@v3
