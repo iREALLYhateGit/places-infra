@@ -1,36 +1,23 @@
-name: Reusable CI
+name: Combined CI
 
 on:
-  workflow_call:
-    inputs:
-      service-name:
-        description: "frontend or backend"
-        required: true
-        type: string
-      docker-image:
-        description: "Docker image name"
-        required: true
-        type: string
-    secrets:
-      DOCKERHUB_USERNAME:
-        required: true
-      DOCKERHUB_TOKEN:
-        required: true
+  repository_dispatch:
+    types: [frontend-pushed, backend-pushed]
+  workflow_dispatch:
 
 jobs:
-  test:
-    name: test
+  test-frontend:
+    name: test frontend
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: checkout frontend
         uses: actions/checkout@v4
-      
-      - name: prove branch
-        run: cat test-lab3.txt
+        with:
+          repository: iREALLYhateGit/PlacesFront
+          ref: labs/lab3
+          token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
 
-      # Frontend
       - name: set up Node.js
-        if: ${{ inputs.service-name == 'frontend' }}
         uses: actions/setup-node@v4
         with:
           node-version: "24"
@@ -38,16 +25,23 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: install dependencies
-        if: ${{ inputs.service-name == 'frontend' }}
         run: npm ci
 
       - name: run unit tests
-        if: ${{ inputs.service-name == 'frontend' }}
         run: npm test
 
-      # Backend
+  test-backend:
+    name: test backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout backend
+        uses: actions/checkout@v4
+        with:
+          repository: iREALLYhateGit/PlacesBack
+          ref: labs/lab3
+          token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
+
       - name: set up JDK
-        if: ${{ inputs.service-name == 'backend' }}
         uses: actions/setup-java@v4
         with:
           distribution: graalvm
@@ -55,44 +49,49 @@ jobs:
           cache: gradle
 
       - name: give execute permissions
-        if: ${{ inputs.service-name == 'backend' }}
         run: chmod +x ./gradlew
 
       - name: run tests
-        if: ${{ inputs.service-name == 'backend' }}
         run: ./gradlew test
 
-  build:
-    name: build
+  build-frontend:
+    name: build frontend
     runs-on: ubuntu-latest
-    needs: test
+    needs: test-frontend
     steps:
-      - name: Checkout
+      - name: checkout frontend
         uses: actions/checkout@v4
+        with:
+          repository: iREALLYhateGit/PlacesFront
+          ref: labs/lab3
+          token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
 
-      - name: prove branch
-        run: cat test-lab3.txt
-      
-      # Frontend
-      - name: Set up Node.js
-        if: ${{ inputs.service-name == 'frontend' }}
+      - name: set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "24"
           cache: npm
           cache-dependency-path: package-lock.json
 
-      - name: Install dependencies
-        if: ${{ inputs.service-name == 'frontend' }}
+      - name: install dependencies
         run: npm ci
 
-      - name: Build
-        if: ${{ inputs.service-name == 'frontend' }}
+      - name: build
         run: npm run build
 
-      # Backend
+  build-backend:
+    name: build backend
+    runs-on: ubuntu-latest
+    needs: test-backend
+    steps:
+      - name: checkout backend
+        uses: actions/checkout@v4
+        with:
+          repository: iREALLYhateGit/PlacesBack
+          ref: labs/lab3
+          token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
+
       - name: set up JDK
-        if: ${{ inputs.service-name == 'backend' }}
         uses: actions/setup-java@v4
         with:
           distribution: graalvm
@@ -100,23 +99,22 @@ jobs:
           cache: gradle
 
       - name: give execute permissions
-        if: ${{ inputs.service-name == 'backend' }}
         run: chmod +x ./gradlew
 
-      - name: Build
-        if: ${{ inputs.service-name == 'backend' }}
+      - name: build
         run: ./gradlew assemble
 
-  docker:
-    name: docker
+  docker-frontend:
+    name: docker frontend
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-frontend
     steps:
-      - name: checkout
+      - name: checkout frontend
         uses: actions/checkout@v4
-
-      - name: prove branch
-        run: cat test-lab3.txt
+        with:
+          repository: iREALLYhateGit/PlacesFront
+          ref: labs/lab3
+          token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
 
       - name: log in to Docker Hub
         uses: docker/login-action@v3
@@ -129,5 +127,29 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ inputs.docker-image }}
-          
+          tags: shuasd/places-frontend
+
+  docker-backend:
+    name: docker backend
+    runs-on: ubuntu-latest
+    needs: build-backend
+    steps:
+      - name: checkout backend
+        uses: actions/checkout@v4
+        with:
+          repository: iREALLYhateGit/PlacesBack
+          ref: labs/lab3
+          token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
+
+      - name: log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: shuasd/places-backend
