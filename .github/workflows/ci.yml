@@ -1,8 +1,6 @@
-name: Combined CI
+name: General CI
 
 on:
-  repository_dispatch:
-    types: [frontend-pushed, backend-pushed]
   workflow_dispatch:
 
 jobs:
