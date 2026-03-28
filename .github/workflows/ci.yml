@@ -103,10 +103,86 @@ jobs:
       - name: build
         run: npm run build
 
+  sonar-backend:
+    name: sonarqube scan backend
+    runs-on: ubuntu-latest
+    needs: build-frontend
+    steps:
+      - name: checkout backend
+        uses: actions/checkout@v4
+        with:
+          repository: iREALLYhateGit/PlacesBack
+          ref: labs/lab3
+          token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
+          fetch-depth: 0
+
+      - name: set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: graalvm
+          java-version: "25"
+          cache: gradle
+
+      - name: give execute permissions
+        run: chmod +x ./gradlew
+
+      - name: run tests with coverage
+        run: ./gradlew test jacocoTestReport
+
+      - name: sonarqube scan
+        uses: sonarsource/sonarqube-scan-action@v6
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: check quality gate
+        uses: sonarsource/sonarqube-quality-gate-action@v1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+  sonar-frontend:
+    name: sonarqube scan frontend
+    runs-on: ubuntu-latest
+    needs: sonar-backend
+    steps:
+      - name: checkout frontend
+        uses: actions/checkout@v4
+        with:
+          repository: iREALLYhateGit/PlacesFront
+          ref: labs/lab3
+          token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
+          fetch-depth: 0
+
+      - name: set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: install dependencies
+        run: npm ci
+
+      - name: run tests with coverage
+        run: npm run test:coverage
+
+      - name: sonarqube scan
+        uses: sonarsource/sonarqube-scan-action@v5
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: check quality gate
+        uses: sonarsource/sonarqube-quality-gate-action@v1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  
   docker-backend:
     name: docker backend
     runs-on: ubuntu-latest
-    needs: build-frontend
+    needs: sonar-frontend
     steps:
       - name: checkout backend
         uses: actions/checkout@v4
