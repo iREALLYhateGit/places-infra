@@ -15,12 +15,12 @@ provider "yandex" {
 }
 
 resource "yandex_compute_instance" "vm" {
-  name = "places-vm"
+  name = "sonarqube"
   platform_id = "standard-v1"
 
   resources {
     cores = 2
-    memory = 2
+    memory = 4
   }
 
   boot_disk {

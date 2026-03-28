@@ -1,0 +1,230 @@
+- name: Install Docker
+  hosts: servers
+  become: true
+  tasks:
+    - name: Update apt
+      apt:
+        update_cache: yes
+
+    - name: Install dependencies
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+        state: present
+
+    - name: Ensure keyring directory exists
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Download Docker GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /tmp/docker.asc
+        mode: '0644'
+
+    - name: De-armor GPG key
+      ansible.builtin.command:
+        cmd: gpg --dearmor -o /etc/apt/keyrings/docker.gpg /tmp/docker.asc
+        creates: /etc/apt/keyrings/docker.gpg
+
+    - name: Remove temporary armored key
+      ansible.builtin.file:
+        path: /tmp/docker.asc
+        state: absent
+    
+    - name: Add Docker repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        filename: docker
+        state: present
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+
+    - name: check docker is active
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Ensure group "docker" exists
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Add ubuntu user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+- name: Deploy SonarQube
+  hosts: servers
+  become: true
+  tasks:
+    - name: Create SonarQube volume directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0777'
+      loop:
+        - /opt/sonarqube/data
+        - /opt/sonarqube/logs
+        - /opt/sonarqube/extensions
+
+    - name: Set vm.max_map_count for Elasticsearch
+      ansible.posix.sysctl:
+        name: vm.max_map_count
+        value: '524288'
+        state: present
+        reload: yes
+
+    - name: Run SonarQube container
+      community.docker.docker_container:
+        name: sonarqube
+        image: sonarqube:latest
+        state: started
+        restart_policy: always
+        ports:
+          - "9000:9000"
+        volumes:
+          - /opt/sonarqube/data:/opt/sonarqube/data
+          - /opt/sonarqube/logs:/opt/sonarqube/logs
+          - /opt/sonarqube/extensions:/opt/sonarqube/extensions
+        env:
+          SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+
+    - name: Wait for SonarQube to start
+      ansible.builtin.uri:
+        url: http://localhost:9000/api/system/status
+        method: GET
+        status_code: 200
+        return_content: yes
+      register: result
+      until: result.status == 200 and (result.json is defined) and result.json.status == "UP"
+      retries: 30
+      delay: 10
+      ignore_errors: no
+      failed_when: false
+
+    - name: Change default admin password
+      ansible.builtin.uri:
+        url: http://localhost:9000/api/users/change_password
+        method: POST
+        user: admin
+        password: admin
+        force_basic_auth: yes
+        body_format: form-urlencoded
+        body:
+          login: admin
+          password: Admin123456!
+          previousPassword: admin
+        status_code: 204
+
+    - name: Create projects
+      ansible.builtin.uri:
+        url: http://localhost:9000/api/projects/create
+        method: POST
+        user: admin
+        password: Admin123456!
+        force_basic_auth: yes
+        body_format: form-urlencoded
+        body:
+          name: "{{ item }}"
+          project: "{{ item }}"
+      loop:
+        - PlacesBack
+        - PlacesFront
+
+    - name: Generate token for CI
+      ansible.builtin.uri:
+        url: http://localhost:9000/api/user_tokens/generate
+        method: POST
+        user: admin
+        password: Admin123456!
+        force_basic_auth: yes
+        body_format: form-urlencoded
+        body:
+          name: ci-token
+          type: GLOBAL_ANALYSIS_TOKEN
+      register: token_result
+
+    - name: Print token
+      ansible.builtin.debug:
+        msg: "SONAR_TOKEN: {{ token_result.json.token }}"
+
+    - name: Create Quality Gate
+      ansible.builtin.uri:
+        url: http://localhost:9000/api/qualitygates/create
+        method: POST
+        user: admin
+        password: Admin123456!
+        force_basic_auth: yes
+        body_format: form-urlencoded
+        body:
+          name: places-gate
+
+    - name: Add coverage condition to Quality Gate
+      ansible.builtin.uri:
+        url: http://localhost:9000/api/qualitygates/create_condition
+        method: POST
+        user: admin
+        password: Admin123456!
+        force_basic_auth: yes
+        body_format: form-urlencoded
+        body:
+          gateName: places-gate
+          metric: coverage
+          op: LT
+          error: "80"
+
+    - name: Add bugs condition
+      ansible.builtin.uri:
+        url: http://localhost:9000/api/qualitygates/create_condition
+        method: POST
+        user: admin
+        password: Admin123456!
+        force_basic_auth: yes
+        body_format: form-urlencoded
+        body:
+          gateName: places-gate
+          metric: bugs
+          op: GT
+          error: "0"
+
+    - name: Add vulnerabilities condition
+      ansible.builtin.uri:
+        url: http://localhost:9000/api/qualitygates/create_condition
+        method: POST
+        user: admin
+        password: Admin123456!
+        force_basic_auth: yes
+        body_format: form-urlencoded
+        body:
+          gateName: places-gate
+          metric: vulnerabilities
+          op: GT
+          error: "0"
+
+    - name: Set Quality Gate as default
+      ansible.builtin.uri:
+        url: http://localhost:9000/api/qualitygates/set_as_default
+        method: POST
+        user: admin
+        password: Admin123456!
+        force_basic_auth: yes
+        body_format: form-urlencoded
+        status_code: 204
+        body:
+          name: places-gate

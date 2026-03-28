@@ -1,0 +1,14 @@
+Terraform:
+terraform init
+terradorm plan
+terraform appply
+terraform destroy
+
+Ansible:
+# Поменять ip в inventory.ini
+ansible-playbook -i inventory.ini playbook.yml
+
+# Скопировать sonar_token
+# Изменить SONAR_HOST_URL и SONAR_TOKEN в GitHub Secrets
+# SONAR_HOST_URL = http://<ip>:9000
+# SONAR_TOKEN - печатается в консоли.
