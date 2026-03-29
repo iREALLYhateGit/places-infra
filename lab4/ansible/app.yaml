@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: places
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/iREALLYhateGit/places-infra
+    targetRevision: labs/lab4
+    path: lab4/k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

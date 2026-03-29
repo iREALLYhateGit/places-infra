@@ -1,0 +1,16 @@
+- name: Install ArgoCD
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Create argocd namespace
+      command: kubectl create namespace argocd
+      ignore_errors: yes
+
+    - name: Install ArgoCD
+      command: kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+    - name: Wait for ArgoCD to be ready
+      command: kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
+
+    - name: Apply ArgoCD Application
+      command: kubectl apply -f app.yaml
