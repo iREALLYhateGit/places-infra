@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: shuasd/places-db:latest
+          env:
+            - name: POSTGRES_DB
+              value: "placesdb"
+            - name: POSTGRES_USER
+              value: "placesdbadmin"
+            - name: POSTGRES_PASSWORD
+              value: "placesdbadminpassword"
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: pgdata
+          emptyDir: {}
