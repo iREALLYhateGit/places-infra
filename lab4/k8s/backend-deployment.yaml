@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: shuasd/places-backend:latest
+          image: shuasd/places-backend:8210192ee033fd5b170f505cf7138d3567ac21ea
           env:
             - name: DATASOURCES_DEFAULT_URL
               value: "jdbc:postgresql://db:5432/placesdb"
