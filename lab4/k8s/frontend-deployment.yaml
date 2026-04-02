@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: shuasd/places-frontend:8210192ee033fd5b170f505cf7138d3567ac21ea
+          image: shuasd/places-frontend:149683df9bd94e25c7480cb0e0931ec02bf400ff
           ports:
             - containerPort: 80
