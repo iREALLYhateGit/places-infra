@@ -1,3 +1,4 @@
+Поднимаем Sonar:
 Terraform:
 terraform init
 terradorm plan
@@ -9,9 +10,32 @@ Ansible:
 ansible-playbook -i inventory.ini playbook.yml
 
 # Скопировать sonar_token
-# Изменить SONAR_HOST_URL и SONAR_TOKEN в GitHub Secrets
+# Изменить SONAR_HOST_URL и SONAR_TOKEN в GitHub Secrets в places-infra
 # SONAR_HOST_URL = http://<ip>:9000
 # SONAR_TOKEN - печатается в консоли.
 
 
+Поднимаем кубер:
+terraform init
+terraform apply
+
+kubectl get nodes - проверяем
+kubectl get nodes -o wide
+
+Устанавливаем ArgoCD:
 ansible-playbook playbook.yml
+
+Для получения пароля в ArgoCD:
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
+
+Для получения пароля в Grafana:
+kubectl --namespace default get secrets monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 -d ; echo
+
+kubectl get pods -n argocd
+kubectl get pods
+kubectl get services
+kubectl get namespaces
+
+kubectl get applications -n argocd
+
+kubectl apply -f monitoring-app.yaml

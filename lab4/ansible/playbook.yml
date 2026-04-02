@@ -12,5 +12,8 @@
     - name: Wait for ArgoCD to be ready
       command: kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
 
+    - name: Expose ArgoCD via NodePort
+      command: kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort", "ports": [{"port": 443, "targetPort": 8080, "nodePort": 30443}]}}'
+
     - name: Apply ArgoCD Application
       command: kubectl apply -f app.yaml
